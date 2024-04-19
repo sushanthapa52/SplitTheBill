@@ -59,48 +59,7 @@ namespace SplitBillTest
     [TestClass]
     public class TipCalculatorTests
     {
-        // Test case to ensure that the method returns correct tip amounts for each person
-        [TestMethod]
-        public void TipCalculate_ReturnsCorrectTipAmounts()
-        {
-            // Arrange
-            var tipCalculator = new Split();
-            var totalCost = new Dictionary<string, decimal>
-            {
-                { "Simran", 50 },
-                { "Uma", 75 },
-                { "Aanand", 100 }
-            };
-            float percent = 15;
 
-            // Act
-            var result = tipCalculator.TipCalculate(totalCost, percent);
-
-            // Assert
-            Assert.AreEqual(7.5m, result["Simran"]); // Simran should pay 7.5 as tip (15% of 50)
-            Assert.AreEqual(11.25m, result["Uma"]); // Uma should pay 11.25 as tip (15% of 75)
-            Assert.AreEqual(15m, result["Aanand"]); // Aanand should pay 15 as tip (15% of 100)
-        }
-        [TestMethod]
-        public void TipCalculate_ReturnsZeroTipForLessThan40()
-        {
-            // Arrange
-            var splitter = new Split();
-            var totalCost = new Dictionary<string, decimal>
-            {
-                { "Simran", 30 },   // Simran's meal cost is less than 40
-                { "Uma", 75 },     // Uma's meal cost is 75
-                { "Aanand", 1000 } // Aanand's meal cost is 1000
-            };
-            float percent = 15;
-
-            // Act
-            var result = splitter.TipCalculate(totalCost, percent);
-
-            // Assert
-            Assert.AreEqual(0m, result["Simran"]); // Simran should pay 0 as tip for meal cost less than 40
-            Assert.AreEqual(11.25m, result["Uma"]); // Uma should pay 11.25 as tip (15% of 75)
-        }
 
         // Test case to ensure that the method throws an ArgumentNullException when the total cost dictionary is null
         [TestMethod]
@@ -112,25 +71,188 @@ namespace SplitBillTest
             float percent = 15;
 
             // Act + Assert
-            Assert.ThrowsException<ArgumentNullException>(() => tipCalculator.TipCalculate(totalCost, percent));
+            Assert.ThrowsException<ArgumentNullException>(() => tipCalculator.CalculateTipWeighted(totalCost, percent));
         }
 
-        // Test case to ensure that the method throws an ArgumentException when the percentage is negative
         [TestMethod]
-        public void TipCalculate_NegativePercentage_ThrowsArgumentException()
+        public void CalculateTipWeighted_CalculatesTipAmountsCorrectly()
         {
             // Arrange
-            var tipCalculator = new Split();
-            var totalCost = new Dictionary<string, decimal>
+            var splitClass = new Split();
+            var mealCosts = new Dictionary<string, decimal>
             {
-                { "Simran", 50 },
-                { "Uma", 75 },
-                { "Aanand", 100 }
+                { "Simran", 30 },
+                { "Uma", 50 },
+                { "Aanand", 70 }
             };
-            float percent = -15;
+            float tipPercentage = 15;
+
+            // Act
+            var result = splitClass.CalculateTipWeighted(mealCosts, tipPercentage);
+
+            // Assert
+            Assert.AreEqual(1.6875m, result["Simran"]); // Simran's tip should be 1.6875
+            Assert.AreEqual(2.8125m, result["Uma"]); // Uma's tip should be 2.8125
+            Assert.AreEqual(3.9375m, result["Aanand"]); // Aanand's tip should be 3.9375
+        }
+
+        [TestMethod]
+        public void CalculateTipWeighted_NullMealCosts_ThrowsArgumentNullException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            Dictionary<string, decimal> mealCosts = null;
+            float tipPercentage = 15;
 
             // Act + Assert
-            Assert.ThrowsException<ArgumentException>(() => tipCalculator.TipCalculate(totalCost, percent));
+            Assert.ThrowsException<ArgumentNullException>(() => splitClass.CalculateTipWeighted(mealCosts, tipPercentage));
         }
+
+        [TestMethod]
+        public void CalculateTipWeighted_EmptyMealCosts_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            var mealCosts = new Dictionary<string, decimal>();
+            float tipPercentage = 15;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipWeighted(mealCosts, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipWeighted_NegativeMealCost_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            var mealCosts = new Dictionary<string, decimal>
+            {
+                { "Simran", 30 },
+                { "Uma", -50 }, // Negative meal cost
+                { "Aanand", 70 }
+            };
+            float tipPercentage = 15;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipWeighted(mealCosts, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipWeighted_NegativeTipPercentage_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            var mealCosts = new Dictionary<string, decimal>
+            {
+                { "Simran", 30 },
+                { "Uma", 50 },
+                { "Aanand", 70 }
+            };
+            float tipPercentage = -15;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipWeighted(mealCosts, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipWeighted_TipPercentageGreaterThan100_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            var mealCosts = new Dictionary<string, decimal>
+            {
+                { "Simran", 30 },
+                { "Uma", 50 },
+                { "Aanand", 70 }
+            };
+            float tipPercentage = 150;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipWeighted(mealCosts, tipPercentage));
+        }
+
+
+
+        [TestMethod]
+        public void CalculateTipPerPerson_CorrectlyCalculatesTip()
+        {
+            // Arrange
+            var splitClass = new Split();
+            decimal price = 100;
+            int numberOfPatrons = 5;
+            float tipPercentage = 15;
+
+            // Act
+            decimal result = splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage);
+
+            // Assert
+            Assert.AreEqual(3m, result);
+        }
+
+        [TestMethod]
+        public void CalculateTipPerPerson_PriceZero_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            decimal price = 0;
+            int numberOfPatrons = 5;
+            float tipPercentage = 15;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipPerPerson_NegativePrice_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            decimal price = -100;
+            int numberOfPatrons = 5;
+            float tipPercentage = 15;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipPerPerson_NumberOfPatronsZero_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            decimal price = 100;
+            int numberOfPatrons = 0;
+            float tipPercentage = 15;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipPerPerson_NegativeTipPercentage_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            decimal price = 100;
+            int numberOfPatrons = 5;
+            float tipPercentage = -15;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+        }
+
+        [TestMethod]
+        public void CalculateTipPerPerson_TipPercentageGreaterThan100_ThrowsArgumentException()
+        {
+            // Arrange
+            var splitClass = new Split();
+            decimal price = 100;
+            int numberOfPatrons = 5;
+            float tipPercentage = 150;
+
+            // Act + Assert
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+        }
+
     }
 }
