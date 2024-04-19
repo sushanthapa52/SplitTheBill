@@ -32,10 +32,10 @@
             decimal tipAmount = totalMealCost * (decimal)(tipPercentage / 100);
 
             var tipPerPerson = new Dictionary<string, decimal>();
-            foreach (var kvp in mealCostsLogic)
+            foreach (var data in mealCostsLogic)
             {
-                decimal personalTip = kvp.Value / totalMealCost * tipAmount;
-                tipPerPerson[kvp.Key] = personalTip;
+                decimal personalTip = (data.Value / totalMealCost) * tipAmount;
+                tipPerPerson[data.Key] = personalTip;
             }
 
             return tipPerPerson;
