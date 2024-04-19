@@ -174,7 +174,7 @@ namespace SplitBillTest
 
 
         [TestMethod]
-        public void CalculateTipPerPerson_CorrectlyCalculatesTip()
+        public void CalculateIndividualTip_CorrectlyCalculatesTip()
         {
             // Arrange
             var splitClass = new Split();
@@ -183,14 +183,14 @@ namespace SplitBillTest
             float tipPercentage = 15;
 
             // Act
-            decimal result = splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage);
+            decimal result = splitClass.CalculateIndividualTip(price, numberOfPatrons, tipPercentage);
 
             // Assert
             Assert.AreEqual(3m, result);
         }
 
         [TestMethod]
-        public void CalculateTipPerPerson_PriceZero_ThrowsArgumentException()
+        public void CalculateIndividualTip_PriceZero_ThrowsArgumentException()
         {
             // Arrange
             var splitClass = new Split();
@@ -199,11 +199,11 @@ namespace SplitBillTest
             float tipPercentage = 15;
 
             // Act + Assert
-            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateIndividualTip(price, numberOfPatrons, tipPercentage));
         }
 
         [TestMethod]
-        public void CalculateTipPerPerson_NegativePrice_ThrowsArgumentException()
+        public void CalculateIndividualTip_NegativePrice_ThrowsArgumentException()
         {
             // Arrange
             var splitClass = new Split();
@@ -212,11 +212,11 @@ namespace SplitBillTest
             float tipPercentage = 15;
 
             // Act + Assert
-            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateIndividualTip(price, numberOfPatrons, tipPercentage));
         }
 
         [TestMethod]
-        public void CalculateTipPerPerson_NumberOfPatronsZero_ThrowsArgumentException()
+        public void CalculateIndividualTip_NumberOfPatronsZero_ThrowsArgumentException()
         {
             // Arrange
             var splitClass = new Split();
@@ -225,11 +225,11 @@ namespace SplitBillTest
             float tipPercentage = 15;
 
             // Act + Assert
-            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateIndividualTip(price, numberOfPatrons, tipPercentage));
         }
 
         [TestMethod]
-        public void CalculateTipPerPerson_NegativeTipPercentage_ThrowsArgumentException()
+        public void CalculateIndividualTip_NegativeTipPercentage_ThrowsArgumentException()
         {
             // Arrange
             var splitClass = new Split();
@@ -238,11 +238,11 @@ namespace SplitBillTest
             float tipPercentage = -15;
 
             // Act + Assert
-            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateIndividualTip(price, numberOfPatrons, tipPercentage));
         }
 
         [TestMethod]
-        public void CalculateTipPerPerson_TipPercentageGreaterThan100_ThrowsArgumentException()
+        public void CalculateIndividualTip_TipPercentageGreaterThan100_ThrowsArgumentException()
         {
             // Arrange
             var splitClass = new Split();
@@ -251,7 +251,7 @@ namespace SplitBillTest
             float tipPercentage = 150;
 
             // Act + Assert
-            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateTipPerPerson(price, numberOfPatrons, tipPercentage));
+            Assert.ThrowsException<ArgumentException>(() => splitClass.CalculateIndividualTip(price, numberOfPatrons, tipPercentage));
         }
 
     }

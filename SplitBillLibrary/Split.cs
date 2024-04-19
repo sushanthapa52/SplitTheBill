@@ -41,7 +41,7 @@
             return tipPerPerson;
         }
 
-        public decimal CalculateTipPerPerson(decimal price, int numberOfPatrons, float tipPercentage)
+        public decimal CalculateIndividualTip(decimal price, int numberOfPatrons, float tipPercentage)
         {
             if (price <= 0)
                 throw new ArgumentException("Price should be greater than zero.", nameof(price));
